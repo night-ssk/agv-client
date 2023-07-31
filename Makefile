@@ -4,14 +4,20 @@ CC=arm-buildroot-linux-gnueabihf-gcc
 CFLAGS=-I.
 
 # 定义目标和依赖关系
-can: can.o can_open.o
-	$(CC) -g  -static -o can can.o can_open.o
-
-can.o: can.c can_open.h
+can: can.o can_open.o can_init.o can_send.o can_recv.o 
+	$(CC) -g  -pthread -static -o can can.o can_open.o can_init.o can_send.o can_recv.o 
+	rm -f *.o
+can.o: can.c can.h 
 	$(CC) -g  -static -c can.c $(CFLAGS)
-
-can_open.o: can_open.c can_open.h
+can_open.o: can_open.c can_open.h 
 	$(CC) -g  -static -c can_open.c $(CFLAGS)
+can_init.o: can_init.c can.h 
+	$(CC) -g  -static -c can_init.c $(CFLAGS)
+can_send.o: can_send.c can.h
+	$(CC) -g  -static -c can_send.c $(CFLAGS)
+can_recv.o: can_recv.c can.h
+	$(CC) -g  -static -c can_recv.c $(CFLAGS)
+
 
 # 清除生成的文件
 clean:
