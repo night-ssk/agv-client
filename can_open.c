@@ -5,7 +5,7 @@
 #include <string.h>
 //SDO控制
 void sdo_send(int fd, SDO_PARAM *sdo_param, uint8_t* data)
-{ 
+{
     struct can_frame send_frame = {0};
     int byte_id = 47 - (sdo_param->byte_size-1)*4;
 

@@ -64,6 +64,6 @@ typedef struct
     int32_t spd;
 }SPD;
 extern void sdo_send(int fd, SDO_PARAM *sdo_param, uint8_t* data);
-extern void can_send(int fd, uint32_t can_id, uint8_t can_dlc, uint8_t* data);
+extern void bit_send(int fd, uint32_t can_id, uint8_t can_dlc, uint8_t* data);
 extern void pdo_send_acc(int fd, ACC_DEC* pdo_param);
 extern void pdo_send_spd(int fd, SPD* pdo_param);
