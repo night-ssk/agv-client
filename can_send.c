@@ -18,7 +18,7 @@ void* can_send(void* sockfd)
 		spd_pdo_right.spd = 0;
 		pdo_send_spd((intptr_t)sockfd, &spd_pdo_left);
 		pdo_send_spd((intptr_t)sockfd, &spd_pdo_right);
-        usleep(10000);        //10ms
+        //usleep(10000);        //10ms
     }
     return 0;
 }

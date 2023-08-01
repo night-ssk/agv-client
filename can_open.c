@@ -12,7 +12,7 @@ void sdo_send(int fd, SDO_PARAM *sdo_param, uint8_t* data)
     send_frame.data[1] = (sdo_param->can_address & 0x00FF0000) >> 16;
     send_frame.data[2] = (sdo_param->can_address & 0xFF000000) >> 24;
     send_frame.data[3] = (sdo_param->can_address & 0x0000FF00) >> 8;
-
+    
     for (int i = 0; i < sdo_param->byte_size; i++)
     {
         send_frame.data[4 + i] = data[i];

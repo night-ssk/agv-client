@@ -22,6 +22,6 @@ void* can_recv(void* sockfd)
                 break;
             }
         }
-        usleep(10000);		//10ms
+        //usleep(10000);		//10ms
     }
 }

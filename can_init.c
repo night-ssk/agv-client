@@ -46,8 +46,8 @@ void motor_init(int sockfd, uint8_t node_id, ACC_DEC* acc_dec_pdo, SPD *spd_pdo,
 			struct can_frame recv_frame;
 			read(sockfd, &recv_frame, sizeof(struct can_frame));
 			get_control_word = recv_frame.data[4] + (recv_frame.data[5] << 8);
-			usleep(500000);
-			printf("get_control_word = %d\ncontrol_word[i] = %d \n \n",get_control_word,control_word[i]);
+			//usleep(500000);
+			//printf("get_control_word = %d\n control_word[i] = %d \n \n",get_control_word,control_word[i]);
 		 }
 	}
 	/* 设置电机模式 */
