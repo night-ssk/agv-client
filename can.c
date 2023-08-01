@@ -100,27 +100,27 @@ int main(void)
 	can_send(sockfd, 0x000, 2, start_node);
 	printf("ok \n");
 	int run_times = 0;
-	spd_pdo_left.spd = 25000;
+	spd_pdo_left.spd = 80000;
 	while(1)
 	{
 		// /* 动态设置电机加减速度 */
 		// pdo_send_acc(sockfd, &acc_dec_pdo_left);
 		// pdo_send_acc(sockfd, &acc_dec_pdo_right);
 		/* 设置电机速度 */
-		// if(run_times++ > 500)
-		// {
-		// 	run_times = 0;
-		// 	spd_pdo_left.spd = -spd_pdo_left.spd;
-		// }
+		if(run_times++ > 100)
+		{
+			run_times = 0;
+			spd_pdo_left.spd = -spd_pdo_left.spd;
+		}
 		printf("spd = %d",spd_pdo_left.spd);
 		//spd_pdo_right.spd = 0;
 		pdo_send_spd(sockfd, &spd_pdo_left);
 		//pdo_send_spd(sockfd, &spd_pdo_right);
 		/* 读取电机反馈 */
-		read(sockfd, &recv_frame, sizeof(struct can_frame));
-		for (int i = 0; i < recv_frame.can_dlc; i++)
-			printf("%02x ", recv_frame.data[i]);
-		printf("\n");
+		// read(sockfd, &recv_frame, sizeof(struct can_frame));
+		// for (int i = 0; i < recv_frame.can_dlc; i++)
+		// 	printf("%02x ", recv_frame.data[i]);
+		// printf("\n");
 		// int32_t pose = 0,spd = 0;
 		// switch (recv_frame.can_id) {
 		// 	case 0x181:
@@ -131,7 +131,7 @@ int main(void)
 		// 		break;
 		// 	}
 		// }
-		usleep(10);		//10ms
+		usleep(100000);		//10ms
 	}
 	/* 关闭套接字 */
 	close(sockfd);
