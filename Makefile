@@ -6,7 +6,7 @@ CFLAGS=-I.
 # 定义目标和依赖关系
 can: can.o can_open.o
 	$(CC) -g  -static -o can can.o can_open.o
-
+	rm -f *.o
 can.o: can.c can_open.h
 	$(CC) -g  -static -c can.c $(CFLAGS)
 

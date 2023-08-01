@@ -76,18 +76,43 @@ int main(void)
 	//sdo_send(sockfd, &acc_sdo_right, (uint8_t *)&acc);
 	 sdo_send(sockfd, &dec_sdo_left, (uint8_t *)&dec);
 	// sdo_send(sockfd, &dec_sdo_right, (uint8_t *)&dec);
+	/*设置pdo地址*/
+	SDO_PARAM pdo_num = {0x16010001, left_node, one_byte};
+	SDO_PARAM pdo_1 = {0x16010120, left_node, four_byte};
+	SDO_PARAM pdo_node = {0x14010120, left_node, four_byte};
+	SDO_PARAM pdo_type = {0x14010210, left_node, one_byte};
+	SDO_PARAM pdo_times = {0x14010310, left_node, two_byte};
+	uint8_t num = 1;
+	uint32_t addr = 0x60FF0020;
+	uint32_t node = 0x301;
+	uint8_t type = 254;
+	uint16_t times = 0;
+	sdo_send(sockfd, &pdo_num, (uint8_t *)&num);
+	sdo_send(sockfd, &pdo_1, (uint8_t *)&addr);
+	sdo_send(sockfd, &pdo_node, (uint8_t *)&node);
+	sdo_send(sockfd, &pdo_type, (uint8_t *)&type);
+	sdo_send(sockfd, &pdo_times, (uint8_t *)&times);
+
+	/*设置pdo地址*/
 	/* 设置PDO */
 	/* 开启节点 */
 	uint8_t start_node[2] = {0x01,0x01};
 	can_send(sockfd, 0x000, 2, start_node);
 	printf("ok \n");
+	int run_times = 0;
+	spd_pdo_left.spd = 25000;
 	while(1)
 	{
 		// /* 动态设置电机加减速度 */
 		// pdo_send_acc(sockfd, &acc_dec_pdo_left);
 		// pdo_send_acc(sockfd, &acc_dec_pdo_right);
 		/* 设置电机速度 */
-		spd_pdo_left.spd = 10000;
+		// if(run_times++ > 500)
+		// {
+		// 	run_times = 0;
+		// 	spd_pdo_left.spd = -spd_pdo_left.spd;
+		// }
+		printf("spd = %d",spd_pdo_left.spd);
 		//spd_pdo_right.spd = 0;
 		pdo_send_spd(sockfd, &spd_pdo_left);
 		//pdo_send_spd(sockfd, &spd_pdo_right);
@@ -96,17 +121,17 @@ int main(void)
 		for (int i = 0; i < recv_frame.can_dlc; i++)
 			printf("%02x ", recv_frame.data[i]);
 		printf("\n");
-		int32_t pose = 0,spd = 0;
-		switch (recv_frame.can_id) {
-			case 0x181:
-			{
-				pose = recv_frame.data[0] + (recv_frame.data[1] << 8) + (recv_frame.data[2] << 16) + (recv_frame.data[3] << 24);
-				spd = recv_frame.data[4] + (recv_frame.data[5] << 8) + (recv_frame.data[6] << 16) + (recv_frame.data[7] << 24);
-				printf("pose = %d   spd = %d \n",pose,spd);
-				break;
-			}
-		}
-		usleep(10000);		//10ms
+		// int32_t pose = 0,spd = 0;
+		// switch (recv_frame.can_id) {
+		// 	case 0x181:
+		// 	{
+		// 		pose = recv_frame.data[0] + (recv_frame.data[1] << 8) + (recv_frame.data[2] << 16) + (recv_frame.data[3] << 24);
+		// 		spd = recv_frame.data[4] + (recv_frame.data[5] << 8) + (recv_frame.data[6] << 16) + (recv_frame.data[7] << 24);
+		// 		printf("pose = %d   spd = %d \n",pose,spd);
+		// 		break;
+		// 	}
+		// }
+		usleep(10);		//10ms
 	}
 	/* 关闭套接字 */
 	close(sockfd);
