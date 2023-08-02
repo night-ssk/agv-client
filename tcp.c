@@ -9,7 +9,7 @@
 #include <signal.h>
 #include <pthread.h>
 #define BACKLOG  100
-
+int32_t spd_buf[2];
 int client_ret = 1;
 pthread_mutex_t client_mutex;
 
@@ -57,13 +57,12 @@ void* tcp_recv(void* socktcp)
 {
     while (1)
     {
-        int32_t ucRecvBuf[2];
         pthread_mutex_lock(&client_mutex);
         int client_id =  client_ret;
         pthread_mutex_unlock(&client_mutex);
         if(client_id > 0) 
         {
-            int iRecvLen = recv(client_id, ucRecvBuf, sizeof(ucRecvBuf), 0);
+            int iRecvLen = recv(client_id, spd_buf, sizeof(spd_buf), 0);
             if (iRecvLen > 0)
             {
                 printf("x = %d w = %d \n", ucRecvBuf[0], ucRecvBuf[1]);
