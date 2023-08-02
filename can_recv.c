@@ -7,7 +7,7 @@ void* can_recv(void* sockfd)
     {
         struct can_frame recv_frame;
         /* 读取电机反馈 */
-        read((intptr_t)sockfd, &recv_frame, sizeof(struct can_frame));
+        read(*(int*)sockfd, &recv_frame, sizeof(struct can_frame));
         for (int i = 0; i < recv_frame.can_dlc; i++)
             printf("%02x ", recv_frame.data[i]);
         printf("\n");
@@ -22,6 +22,6 @@ void* can_recv(void* sockfd)
                 break;
             }
         }
-        //usleep(10000);		//10ms
+        usleep(10000);		//10ms
     }
 }

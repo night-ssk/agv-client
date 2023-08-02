@@ -35,18 +35,21 @@ void tcp_connect(int socktcp)
 {
     struct sockaddr_in client_addr;
     socklen_t addr_len = sizeof(struct sockaddr);
+
     pthread_mutex_lock(&client_mutex);
-    int client_id =  client_ret;
+    client_ret = -1;
     pthread_mutex_unlock(&client_mutex);
-    printf("socktcp2 = %d\n", socktcp);
-    client_id = accept(socktcp, (struct sockaddr *)&client_addr, &addr_len);
+
+    int client_id = accept(socktcp, (struct sockaddr *)&client_addr, &addr_len);
     while (client_id < 0) 
     {
         client_id = accept(socktcp, (struct sockaddr *)&client_addr, &addr_len);
     }
+    
     pthread_mutex_lock(&client_mutex);
     client_ret = client_id;
     pthread_mutex_unlock(&client_mutex);
+    
     printf("client connect success\n");
     printf("Get connect from client %s\n", inet_ntoa(client_addr.sin_addr));
 }
@@ -54,42 +57,47 @@ void* tcp_recv(void* socktcp)
 {
     while (1)
     {
-        printf("recv_thread\n");
-        unsigned char ucRecvBuf[1000];
+        int32_t ucRecvBuf[2];
         pthread_mutex_lock(&client_mutex);
         int client_id =  client_ret;
         pthread_mutex_unlock(&client_mutex);
-        int iRecvLen = recv(client_id, ucRecvBuf, 1000, 0);
-        // if (iRecvLen > 0)
-        // {
-        //     printf("recv data from client: %s\n", ucRecvBuf);
-        // }
-        // else 
-        // {
-        //     //printf("client disconnect\n");
-        //     tcp_connect(*(int *)socktcp);//重新连接
-        // }
+        if(client_id > 0) 
+        {
+            int iRecvLen = recv(client_id, ucRecvBuf, sizeof(ucRecvBuf), 0);
+            if (iRecvLen > 0)
+            {
+                printf("x = %d w = %d \n", ucRecvBuf[0], ucRecvBuf[1]);
+            }
+            else 
+            {
+                printf("client disconnect\n");
+                tcp_connect(*(int *)socktcp);//重新连接
+            }
+        }
+        usleep(10000);      //10ms
     }
 }
 void* tcp_send(void* socktcp)
 {
     while (1)
     {
-        printf("send_thread\n");
         char sendbuf[1000] = "ssk";
         pthread_mutex_lock(&client_mutex);
         int client_id =  client_ret;
         pthread_mutex_unlock(&client_mutex);
-        int iSendLen = send(client_id, sendbuf, strlen(sendbuf), 0);
-        if (iSendLen > 0)
+        if(client_id > 0) 
         {
-            //printf("send data to client: %s\n", sendbuf);
+            int iSendLen = send(client_id, sendbuf, strlen(sendbuf), 0);
+            if (iSendLen > 0)
+            {
+                printf("send data to client: %s\n", sendbuf);
+            }
+            else 
+            {
+                printf("client disconnect\n");
+                tcp_connect(*(int *)socktcp);//重新连接
+            }
         }
-        else 
-        {
-            printf("client disconnect\n");
-            tcp_connect(*(int *)socktcp);//重新连接
-        }
-        //usleep(10000);      //10ms
+        usleep(1000000);      //10ms
     }
 }

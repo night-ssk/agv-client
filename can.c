@@ -27,6 +27,7 @@ int main(void)
 	//创建can接收线程
 	pthread_t can_recv_thread;
 	pthread_create(&can_recv_thread, NULL, can_recv, (void *)&sockfd);
+	//等待线程结束
 	pthread_join(tcp_send_thread, NULL);
 	pthread_join(tcp_recv_thread, NULL);
 	pthread_join(can_send_thread, NULL);

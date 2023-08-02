@@ -30,6 +30,7 @@ enum pdo_id
     acc_dec_d = 0x200, //加减速控制
     spd_d = 0x300, //速度控制
 };
+
 enum sdo_id
 {
     one_byte = 1,//0x2F, //1字节 47 - (x-1)*4
