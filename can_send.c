@@ -1,5 +1,7 @@
 #include "can.h"
 #include <unistd.h>
+#include "tcp.h"
+
 void* can_send(void* sockfd)
 {
     ACC_DEC acc_dec_pdo_left;
@@ -14,11 +16,13 @@ void* can_send(void* sockfd)
 		// pdo_send_acc(*sockfd, &acc_dec_pdo_left);
 		// pdo_send_acc(*sockfd, &acc_dec_pdo_right);
 		/* 设置电机速度 */
-		spd_pdo_left.spd = 10000;
-		spd_pdo_right.spd = 0;
-		// pdo_send_spd(*(int*)sockfd, &spd_pdo_left);
-		// pdo_send_spd(*(int*)sockfd, &spd_pdo_right);
-        //usleep(10000);        //10ms
+        pthread_mutex_lock(&tcp_mutex);
+		spd_pdo_left.spd = spd_buf[0] * 6;
+		spd_pdo_right.spd = spd_buf[1] * 6; 
+        pthread_mutex_unlock(&tcp_mutex);
+		pdo_send_spd(*(int*)sockfd, &spd_pdo_left);
+		pdo_send_spd(*(int*)sockfd, &spd_pdo_right);
+        usleep(10000);        //10ms
     }
     return 0;
 }

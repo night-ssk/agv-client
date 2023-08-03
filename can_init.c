@@ -73,6 +73,7 @@ void motor_init(int sockfd, uint8_t node_id, ACC_DEC* acc_dec_pdo, SPD *spd_pdo,
 			get_control_word = recv_frame.data[4] + (recv_frame.data[5] << 8);
 			printf("get_control_word = %d\n control_word[i] = %d \n \n",get_control_word,control_word[i]);
 		  }
+		usleep(1000000);
 	}
 	/* 设置电机模式 */
 	sdo_send(sockfd, &work_mode_sdo,(uint8_t *)&mode);

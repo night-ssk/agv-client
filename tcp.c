@@ -7,11 +7,13 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <signal.h>
-#include <pthread.h>
+#include "tcp.h"
 #define BACKLOG  100
-int32_t spd_buf[2];
+#define MAX(x,y) (x > y ? y : (x < -y ? -y : x))
+int32_t spd_buf[2] = {0,0};
 int client_ret = 1;
 pthread_mutex_t client_mutex;
+pthread_mutex_t tcp_mutex;
 
 int tcp_init()
 {
@@ -62,10 +64,15 @@ void* tcp_recv(void* socktcp)
         pthread_mutex_unlock(&client_mutex);
         if(client_id > 0) 
         {
-            int iRecvLen = recv(client_id, spd_buf, sizeof(spd_buf), 0);
+            int32_t recv_buf[2] = {0,0};
+            int iRecvLen = recv(client_id, recv_buf, sizeof(recv_buf), 0);
+            pthread_mutex_lock(&tcp_mutex);
+            spd_buf[0] = MAX(recv_buf[0],60000);
+            spd_buf[1] = MAX(recv_buf[1],60000);
+            pthread_mutex_unlock(&tcp_mutex);
             if (iRecvLen > 0)
             {
-                printf("x = %d w = %d \n", ucRecvBuf[0], ucRecvBuf[1]);
+                printf("x = %d w = %d \n", recv_buf[0], recv_buf[1]);
             }
             else 
             {
@@ -73,7 +80,7 @@ void* tcp_recv(void* socktcp)
                 tcp_connect(*(int *)socktcp);//重新连接
             }
         }
-        usleep(10000);      //10ms
+        usleep(1000);      //10ms
     }
 }
 void* tcp_send(void* socktcp)
