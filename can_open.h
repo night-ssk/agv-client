@@ -30,6 +30,7 @@ enum pdo_id
     acc_dec_d = 0x200, //加减速控制
     spd_d = 0x300, //速度控制
 };
+
 enum sdo_id
 {
     one_byte = 1,//0x2F, //1字节 47 - (x-1)*4
@@ -65,6 +66,6 @@ typedef struct
 }SPD;
 
 extern void sdo_send(int fd, SDO_PARAM *sdo_param, uint8_t* data);
-extern void can_send(int fd, uint32_t can_id, uint8_t can_dlc, uint8_t* data);
+extern void bit_send(int fd, uint32_t can_id, uint8_t can_dlc, uint8_t* data);
 extern void pdo_send_acc(int fd, ACC_DEC* pdo_param);
 extern void pdo_send_spd(int fd, SPD* pdo_param);

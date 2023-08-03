@@ -5,15 +5,14 @@
 #include <string.h>
 //SDO控制
 void sdo_send(int fd, SDO_PARAM *sdo_param, uint8_t* data)
-{ 
+{
     struct can_frame send_frame = {0};
     int byte_id = 47 - (sdo_param->byte_size-1)*4;
-
     send_frame.data[0] = byte_id; //发送字节大小对应ID
     send_frame.data[1] = (sdo_param->can_address & 0x00FF0000) >> 16;
     send_frame.data[2] = (sdo_param->can_address & 0xFF000000) >> 24;
     send_frame.data[3] = (sdo_param->can_address & 0x0000FF00) >> 8;
-
+    
     for (int i = 0; i < sdo_param->byte_size; i++)
     {
         send_frame.data[4 + i] = data[i];
@@ -67,7 +66,7 @@ void pdo_send_spd(int fd, SPD* pdo_param)
     printf("\n");
 }
 //can发送
-void can_send(int fd, uint32_t can_id, uint8_t can_dlc, uint8_t* data)
+void bit_send(int fd, uint32_t can_id, uint8_t can_dlc, uint8_t* data)
 {
     struct can_frame send_frame = {0};
     send_frame.can_id = can_id;
